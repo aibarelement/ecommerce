@@ -1,9 +1,8 @@
 from rest_framework import status
-from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
-from . import serializers, services, models
+from . import serializers, services
 
 
 class UserViewSet(ViewSet):
@@ -22,23 +21,7 @@ class UserViewSet(ViewSet):
             data=request.data
         )
         serializer.is_valid(raise_exception=True)
-        user = models.CustomUser.objects.get(email=serializer.validated_data['email'])
-        token, _ = Token.objects.get_or_create(user=user)
 
-        return Response({
-            'token': token.key,
-            'user_id': user.pk,
-            'email': user.email,
-        })
+        tokens = self.user_services.create_token(data=serializer.validated_data)
 
-    def get_user(self, request, *args, **kwargs):
-        serializer = serializers.GetUserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-
-
-        token = Token.objects.get(key=serializer.validated_data['token'])
-
-        return Response({
-            'email': token.user.email,
-        })
+        return Response(tokens)
