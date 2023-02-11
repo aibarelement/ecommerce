@@ -1,0 +1,9 @@
+{% block subject %}Welcome to out ecommerce{% endblock %}
+{% block plain %}
+
+  You just signed up for my website, using:
+      phone number: {{phone_number}}
+      email: {{email}}
+
+  Thanks, you rock!
+{% endblock %}
