@@ -1,3 +1,4 @@
+from django.db.models import Min, Q
 from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import ModelViewSet
 
@@ -15,13 +16,15 @@ class ProductViewSet(mixins.ActionSerializerMixin, ModelViewSet):
         'retrieve': serializers.RetrieveProductSerializer,
     }
     serializer_class = serializers.ProductSerializer
-    queryset = models.Product.objects.all()
+    queryset = models.Product.objects.annotate(
+        min_amount=Min('seller_products__amount', filter=Q(seller_products__is_active=True))
+    )
 
     def get_permissions(self):
         if self.action in ('list', 'retrieve'):
-            return AllowAny,
+            return AllowAny(),
 
-        return permissions.IsMe,
+        return permissions.IsMe(),
     
     def list(self, request, *args, **kwargs):
         print(type(request.user))

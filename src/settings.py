@@ -33,15 +33,19 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'djoser',
     'rest_framework.authtoken',
     'django_filters',
     'debug_toolbar',
     'django_cleanup.apps.CleanupConfig',
     'rest_framework_simplejwt',
     'phonenumber_field',
+    'drf_yasg',
 
-    'products',
     'users',
+    'products',
+    'seller_products',
+    'orders',
 ]
 
 MIDDLEWARE = [
