@@ -14,7 +14,7 @@ class Order(models.Model):
         limit_choices_to={'user_type': user_choices.UserTypeChoices.Customer}
     )
     status = models.CharField(
-        max_length=10,
+        max_length=20,
         choices=choices.OrderStatusChoices.choices,
         default=choices.OrderStatusChoices.New,
     )
