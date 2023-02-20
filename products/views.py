@@ -1,4 +1,3 @@
-from django.db.models import Min, Q
 from rest_framework.viewsets import ModelViewSet
 
 from utils import mixins
