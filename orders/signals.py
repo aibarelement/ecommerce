@@ -8,7 +8,6 @@ from . import models
 
 @receiver(post_save, sender=models.Order)
 def send_order_notification(sender, instance, **kwargs):
-    await models.Order.objects.aget()
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
         str(instance.id),
