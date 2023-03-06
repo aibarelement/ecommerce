@@ -1,0 +1,50 @@
+[
+   {
+      "model":"users.customuser",
+      "pk":"02ba6926-39e9-4039-b70e-d240dc11f75f",
+      "fields":{
+         "password":"!b5vL3tCXzO846LMHCOqpASSuhck9QUIwPJnmOmsm",
+         "last_login":null,
+         "is_superuser":false,
+         "first_name":"",
+         "last_name":"",
+         "is_staff":false,
+         "is_active":true,
+         "date_joined":"2023-03-06T14:38:10.520Z",
+         "username":null,
+         "email":"seller@mail.com",
+         "phone_number":"+77764791669",
+         "user_type":"Seller",
+         "groups":[
+
+         ],
+         "user_permissions":[
+
+         ]
+      }
+   },
+   {
+      "model":"users.customuser",
+      "pk":"6a4496de-a122-4040-95f9-af71b78f9cd2",
+      "fields":{
+         "password":"pbkdf2_sha256$390000$JnRoOCuVQVfTA6gJDIAcfX$0P2a7jZSNGlyK2gymSOEYUX23+JofWlOoGH+lH6gwdI=",
+         "last_login":null,
+         "is_superuser":false,
+         "first_name":"",
+         "last_name":"",
+         "is_staff":false,
+         "is_active":true,
+         "date_joined":"2023-03-06T14:37:41.115Z",
+         "username":null,
+         "email":"customer@mail.com",
+         "phone_number":"+77764791670",
+         "user_type":"Customer",
+         "groups":[
+
+         ],
+         "user_permissions":[
+
+         ]
+      }
+   }
+]

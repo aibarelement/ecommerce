@@ -1,0 +1,1 @@
+[{"model": "seller_products.sellerproduct", "pk": 1, "fields": {"product": "526c2abe-70c0-48d3-850c-e3f3bbd321f2", "seller": "02ba6926-39e9-4039-b70e-d240dc11f75f", "amount": "10000.00", "amount_currency": "KZT", "is_active": true, "created_at": "2023-03-06T14:39:50.472Z", "updated_at": "2023-03-06T14:39:50.472Z"}}]

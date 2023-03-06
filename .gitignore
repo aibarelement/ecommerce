@@ -85,7 +85,7 @@ target/
 __pycache__/
 local_settings.py
 
-.env
+code/.env
 db.sqlite3
-media
+code/media
 static

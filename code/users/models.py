@@ -35,7 +35,7 @@ class CustomUserManager(BaseUserManager):
         """
         Creates and saves a superuser with the given email and password.
         """
-        user = self.create_user(phone_number=phone_number, email=email, password=password)
+        user = self.create_user(phone_number=phone_number, email=email)
         user.is_staff = True
         user.is_superuser = True
         user.set_password(password)

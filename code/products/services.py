@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from django.db.models import Min, Q, QuerySet
+from django.db.models import QuerySet
 
 from . import models, repos
 

@@ -8,7 +8,12 @@ class Product(models.Model):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     title = models.CharField(max_length=100, verbose_name=_('Title'), unique=True)
     body = models.TextField(verbose_name=_('Body'))
-    main_image = models.ImageField(upload_to='products/%Y/%m/%d/', verbose_name=_('Main image'))
+    main_image = models.ImageField(
+        upload_to='products/%Y/%m/%d/',
+        verbose_name=_('Main image'),
+        null=True,
+        blank=True,
+    )
     is_top = models.BooleanField(default=False, verbose_name=_('Is top?'))
     is_active = models.BooleanField(default=True, verbose_name=_('Is active?'))
     data = models.JSONField(default=dict, verbose_name=_('Data'))
