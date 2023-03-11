@@ -1,11 +1,11 @@
 import pytest
 from django.contrib.auth import get_user_model
 from django.db.models import Sum
-from django.test.client import Client
 from rest_framework import status
 
 from seller_products import models, choices
 from orders import repos
+import helpers
 
 
 @pytest.mark.django_db
@@ -16,14 +16,16 @@ class OrderReposTest(object):
     def loaddata(self, load_fixtures):
         load_fixtures('users.json', 'products.json', 'seller_products.json')
 
-    def test_create_order(self):
-        customer = get_user_model().objects.get(phone_number='+77764791670')
-        seller_product = models.SellerProduct.objects.get()
-        order_items = [
-            {'seller_product': seller_product},
-        ]
+    @pytest.mark.parametrize('user_id, seller_product_ides', (
+        ('6a4496de-a122-4040-95f9-af71b78f9cd2', (1,)),
+        ('6a4496de-a122-4040-95f9-af71b78f9cd2', (1, 2)),
+    ))
+    def test_create_order(self, user_id, seller_product_ides):
+        user = get_user_model().objects.get(pk=user_id)
+        seller_products = models.SellerProduct.objects.filter(id__in=seller_product_ides)
+        order_items = [{'seller_product': seller_product} for seller_product in seller_products]
         data = {
-            'customer': customer,
+            'customer': user,
             'order_items': order_items,
         }
         order = self.order_repos.create_order(data)
@@ -45,13 +47,22 @@ class OrderViewTest(object):
     def loaddata(self, load_fixtures):
         load_fixtures('users.json', 'products.json', 'seller_products.json')
 
-    def test_create_order(self, client: Client):
-        client.login(phone_number='+77764791670', password='string123')
+    @pytest.mark.parametrize('case, user_id, status_code', (
+        ('1', '6a4496de-a122-4040-95f9-af71b78f9cd2', status.HTTP_201_CREATED),
+        ('2', '6a4496de-a122-4040-95f9-af71b78f9cd2', status.HTTP_201_CREATED),
+        ('3', '6a4496de-a122-4040-95f9-af71b78f9cd2', status.HTTP_400_BAD_REQUEST),
+        ('4', '6a4496de-a122-4040-95f9-af71b78f9cd2', status.HTTP_400_BAD_REQUEST),
+        ('5', '6a4496de-a122-4040-95f9-af71b78f9cd2', status.HTTP_400_BAD_REQUEST),
+        ('1', '02ba6926-39e9-4039-b70e-d240dc11f75f', status.HTTP_403_FORBIDDEN),
+    ))
+    def test_create_order(self, case, user_id, status_code, api_client):
+        user = get_user_model().objects.get(pk=user_id)
+        data = helpers.load_json_data(f'orders/create_order/{case}')
+        response = api_client.post(
+            '/api/v1/orders/',
+            format='json',
+            data=data,
+            HTTP_AUTHORIZATION=helpers.access_token(user),
+        )
 
-        response = client.post('/api/v1/orders/', content_type='application/json', data={
-            'order_items': [
-                {'seller_product': 1},
-            ],
-        })
-
-        assert response.status_code == status.HTTP_201_CREATED
+        assert response.status_code == status_code

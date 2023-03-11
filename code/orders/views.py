@@ -4,7 +4,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from utils import mixins
 
-from . import models, serializers, services
+from . import models, serializers, services, permissions
 
 
 class OrderItemViewSet(ModelViewSet):
@@ -19,6 +19,7 @@ class OrderViewSet(mixins.ActionSerializerMixin, ModelViewSet):
     order_services: services.OrderServicesInterface = services.OrderServicesV1()
     serializer_class = serializers.OrderSerializer
     queryset = order_services.get_orders()
+    permission_classes = permissions.IsCustomer,
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
