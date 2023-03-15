@@ -1,15 +1,18 @@
-from typing import Protocol, OrderedDict
-
-from django.db.models import QuerySet
+import datetime as dt
+from typing import OrderedDict, Protocol
+from django.db.models import QuerySet, Sum
 from django.db import transaction
+from django.utils import timezone
 
 from . import models
+from payments import models as payment_models
+from seller_products import choices as seller_product_choices
 
 
 class OrderReposInterface(Protocol):
 
     @staticmethod
-    def create_order(data: OrderedDict) -> models.Order: ...
+    def create_order(data: OrderedDict) -> tuple[models.Order, payment_models.Bill]: ...
 
     @staticmethod
     def get_orders() -> QuerySet[models.Order]: ...
@@ -18,10 +21,9 @@ class OrderReposInterface(Protocol):
 class OrderReposV1:
 
     @staticmethod
-    def create_order(data: OrderedDict) -> models.Order:
+    def create_order(data: OrderedDict) -> tuple[models.Order, payment_models.Bill]:
         with transaction.atomic():
             order_items = data.pop('order_items')
-
             order = models.Order.objects.create(**data)
             models.OrderItem.objects.bulk_create([
                 models.OrderItem(
@@ -32,7 +34,17 @@ class OrderReposV1:
                 ) for i in order_items
             ])
 
-        return order
+            total = order.order_items.aggregate(total=Sum('amount'))['total']
+            bill = payment_models.Bill.objects.create(
+                order=order,
+                total=total,
+                amount=total,
+                amount_currency=seller_product_choices.CurrencyChoices.KZT,
+                number=payment_models.Bill.generate_number(),
+                expires_at=timezone.now() + dt.timedelta(minutes=30),
+            )
+
+        return order, bill
 
     @staticmethod
     def get_orders() -> QuerySet[models.Order]:

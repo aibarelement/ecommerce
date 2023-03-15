@@ -1,11 +1,18 @@
-import pytest
+from datetime import timedelta
+
 from django.contrib.auth import get_user_model
+
+import pytest
+
+import helpers
+
 from django.db.models import Sum
+from django.utils import timezone
 from rest_framework import status
 
 from seller_products import models, choices
+from payments import choices as payment_choices
 from orders import repos
-import helpers
 
 
 @pytest.mark.django_db
@@ -20,6 +27,7 @@ class OrderReposTest(object):
         ('6a4496de-a122-4040-95f9-af71b78f9cd2', (1,)),
         ('6a4496de-a122-4040-95f9-af71b78f9cd2', (1, 2)),
     ))
+    @pytest.mark.freeze_time('2020-01-01')
     def test_create_order(self, user_id, seller_product_ides):
         user = get_user_model().objects.get(pk=user_id)
         seller_products = models.SellerProduct.objects.filter(id__in=seller_product_ides)
@@ -28,7 +36,7 @@ class OrderReposTest(object):
             'customer': user,
             'order_items': order_items,
         }
-        order = self.order_repos.create_order(data)
+        order, bill = self.order_repos.create_order(data)
 
         assert order.order_items.count() == len(order_items)
 
@@ -38,6 +46,10 @@ class OrderReposTest(object):
         assert all(
             i.amount_currency == choices.CurrencyChoices.KZT for i in order.order_items.all()
         )
+
+        assert bill.amount == bill.total == total
+        assert bill.status == payment_choices.BillStatusChoices.New
+        assert bill.expires_at == timezone.now() + timedelta(minutes=30)
 
 
 @pytest.mark.django_db

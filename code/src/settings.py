@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'products.apps.ProductsConfig',
     'seller_products',
     'orders',
+    'payments',
 ]
 
 MIDDLEWARE = [
@@ -92,7 +93,7 @@ ASGI_APPLICATION = 'src.asgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgres://postgres:qwerty123@localhost:6543/postgres'
+        env='DB_URL',
     ),
 }
 
@@ -160,14 +161,14 @@ SIMPLE_JWT = {
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://localhost:6379/1',
+        'LOCATION': f'redis://ecommerce-redis:6379/1',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
     }
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
@@ -188,7 +189,7 @@ CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            'hosts': [('localhost', 6379)],
+            'hosts': [('ecommerce-redis', 6379)],
         },
     },
 }
@@ -197,3 +198,8 @@ CORS_ALLOWED_ORIGINS = (
     'http://localhost:3000',
     'https://example.com',
 )
+
+CELERY_BROKER_URL = 'redis://ecommerce-redis:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
