@@ -18,7 +18,10 @@ class OrderServicesV1:
 
     def create_order(self, data: OrderedDict) -> models.Order:
         order, bill = self.order_services.create_order(data=data)
-        payment_tasks.check_bill_expires_at.apply_async((bill.id,), eta=bill.expires_at)
+        payment_tasks.check_bill_expires_at.apply_async(
+            (bill.id,),
+            eta=bill.expires_at,
+        )
 
         return order
 

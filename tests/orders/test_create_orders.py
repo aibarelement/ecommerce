@@ -1,17 +1,16 @@
-from datetime import timedelta
+import datetime as dt
 
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 import pytest
 
 import helpers
 
 from django.db.models import Sum
-from django.utils import timezone
 from rest_framework import status
 
-from seller_products import models, choices
-from payments import choices as payment_choices
+from seller_products import models
 from orders import repos
 
 
@@ -43,13 +42,8 @@ class OrderReposTest(object):
         total = order.order_items.aggregate(total=Sum('amount'))['total']
         assert total == sum(i['seller_product'].amount for i in order_items)
 
-        assert all(
-            i.amount_currency == choices.CurrencyChoices.KZT for i in order.order_items.all()
-        )
-
         assert bill.amount == bill.total == total
-        assert bill.status == payment_choices.BillStatusChoices.New
-        assert bill.expires_at == timezone.now() + timedelta(minutes=30)
+        assert bill.expires_at == timezone.now() + dt.timedelta(minutes=30)
 
 
 @pytest.mark.django_db

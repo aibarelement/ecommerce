@@ -1,32 +1,33 @@
 import random
 import uuid
-from django.db import models
 
+from django.db import models
 from seller_products import choices as seller_product_choices
-from . import choices
+
+from payments import choices
 
 
 class Bill(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
+    id = models.UUIDField(primary_key=True, editable=True, default=uuid.uuid4)
     order = models.ForeignKey(
         to='orders.Order',
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        related_name='bills',
     )
     total = models.DecimalField(max_digits=14, decimal_places=2)
     amount = models.DecimalField(max_digits=14, decimal_places=2)
     amount_currency = models.CharField(
         max_length=3,
-        choices=seller_product_choices.CurrencyChoices.choices
+        choices=seller_product_choices.CurrencyChoices.choices,
     )
+    number = models.CharField(max_length=10, unique=True)
     status = models.CharField(
-        max_length=20,
         choices=choices.BillStatusChoices.choices,
-        default=choices.BillStatusChoices.New
+        default=choices.BillStatusChoices.New,
+        max_length=15,
     )
-    number = models.CharField(max_length=10, unique=True, db_index=True)
-    expires_at = models.DateTimeField(blank=True, null=True)
-
+    expires_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -36,18 +37,26 @@ class Bill(models.Model):
 
         if cls.objects.filter(number=number).exists():
             return cls.generate_number()
+
         return number
 
 
 class Transaction(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4)
-    bill = models.ForeignKey(to=Bill, on_delete=models.SET_NULL, null=True)
+    id = models.UUIDField(primary_key=True, editable=True, default=uuid.uuid4)
+    bill = models.ForeignKey(
+        to=Bill,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='transactions',
+    )
     amount = models.DecimalField(max_digits=14, decimal_places=2)
     amount_currency = models.CharField(
         max_length=3,
-        choices=seller_product_choices.CurrencyChoices.choices
+        choices=seller_product_choices.CurrencyChoices.choices,
     )
-    transaction_type = models.CharField(max_length=10, choices=choices.TransactionType.choices)
-
+    transaction_type = models.CharField(
+        choices=choices.TransactionTypeChoices.choices,
+        max_length=6,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

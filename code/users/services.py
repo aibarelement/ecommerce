@@ -1,3 +1,4 @@
+import logging
 import random
 import uuid
 from typing import Protocol, OrderedDict
@@ -10,6 +11,8 @@ from templated_email import send_templated_mail
 
 from . import repos, models
 
+
+logger = logging.getLogger(__name__)
 
 class UserServicesInterface(Protocol):
 
@@ -86,7 +89,7 @@ class UserServicesV1:
 
     @staticmethod
     def _send_sms_to_phone_number(phone_number: str, code: str) -> None:
-        print(f'send sms code {code} to {phone_number}')
+        logger.info(f'send sms code {code} to {phone_number}')
 
     @staticmethod
     def _send_letter_to_email(user: models.CustomUser) -> None:

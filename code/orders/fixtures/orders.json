@@ -1,7 +1,7 @@
 [
     {
         "model": "orders.order",
-        "pk": 2,
+        "pk": 1,
         "fields": {
             "customer": "6a4496de-a122-4040-95f9-af71b78f9cd2",
             "status": "New",
@@ -13,7 +13,7 @@
         "model": "orders.orderitem",
         "pk": 2,
         "fields": {
-            "order": 2,
+            "order": 1,
             "seller_product": 1,
             "amount": "10000.00",
             "amount_currency": "KZT"

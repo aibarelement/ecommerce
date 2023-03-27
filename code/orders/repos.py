@@ -33,15 +33,14 @@ class OrderReposV1:
                     amount_currency=i['seller_product'].amount_currency,
                 ) for i in order_items
             ])
-
             total = order.order_items.aggregate(total=Sum('amount'))['total']
             bill = payment_models.Bill.objects.create(
                 order=order,
+                number=payment_models.Bill.generate_number(),
                 total=total,
                 amount=total,
                 amount_currency=seller_product_choices.CurrencyChoices.KZT,
-                number=payment_models.Bill.generate_number(),
-                expires_at=timezone.now() + dt.timedelta(minutes=30),
+                expires_at=timezone.now() + dt.timedelta(minutes=30)
             )
 
         return order, bill

@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'seller_products',
     'orders',
     'payments',
+    'api_urls',
 ]
 
 MIDDLEWARE = [
@@ -63,7 +64,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'src.middleware.HttpApiMiddleware',
+    # 'src.middleware.SecondMiddleware',
 ]
 
 ROOT_URLCONF = 'src.urls'
@@ -94,6 +98,7 @@ ASGI_APPLICATION = 'src.asgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         env='DB_URL',
+        default='postgres://postgres:qwerty123@ecommerce-db:5432/postgres',
     ),
 }
 
@@ -128,6 +133,10 @@ USE_I18N = True
 
 USE_TZ = True
 
+LOCALE_PATHS = [
+    BASE_DIR / 'locale'
+]
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
@@ -161,7 +170,7 @@ SIMPLE_JWT = {
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': f'redis://ecommerce-redis:6379/1',
+        'LOCATION': 'redis://ecommerce-redis:6379/1',
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
         }
@@ -203,3 +212,31 @@ CELERY_BROKER_URL = 'redis://ecommerce-redis:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'WARNING',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'payments': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+        '': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+        },
+    }
+}

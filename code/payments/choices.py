@@ -3,13 +3,13 @@ from django.db import models
 
 class BillStatusChoices(models.TextChoices):
     New = 'New'
-    Pending = 'Pending' # в ожидании
+    Pending = 'Pending'
     Paid = 'Paid'
-    Expired = 'Expired' # истекший
-    Refund = 'Refund' # возвращать деньги
-    RefundPartially = 'RefundPartially' # частичный
+    Expired = 'Expired'
+    Refund = 'Refund'
+    RefundPartially = 'RefundPartially'
 
 
-class TransactionType(models.TextChoices):
+class TransactionTypeChoices(models.TextChoices):
     Ok = 'Ok'
-    Refund = 'Refund' # возвращать деньги
+    Refund = 'Refund'
