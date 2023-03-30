@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'seller_products',
     'orders',
     'payments',
+    'reviews',
     'api_urls',
 ]
 
@@ -66,8 +67,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
-    # 'src.middleware.HttpApiMiddleware',
-    # 'src.middleware.SecondMiddleware',
+    'src.middlewares.FirstMiddleware',
 ]
 
 ROOT_URLCONF = 'src.urls'

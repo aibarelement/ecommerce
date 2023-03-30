@@ -38,7 +38,6 @@ class BillReposV1:
                     amount=bill.amount,
                     transaction_type=choices.TransactionTypeChoices.Ok,
                 )
+                logger.info(f'bill with id {bill_id} is successfully paid!')
             except models.Bill.DoesNotExist:
                 logger.error(f'bill with id {bill_id} not found')
-            finally:
-                logger.info(f'bill with id {bill_id} is successfully paid!')

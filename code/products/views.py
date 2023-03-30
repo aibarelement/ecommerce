@@ -1,9 +1,15 @@
+import logging
+import random
+
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
 from utils import mixins
 from . import serializers, permissions, services
 from django.utils.translation import gettext as _
+
+
+logger = logging.getLogger(__name__)
 
 
 class ProductImageViewSet(ModelViewSet):
@@ -23,6 +29,9 @@ class ProductViewSet(mixins.ActionSerializerMixin, ModelViewSet):
     serializer_class = serializers.ProductSerializer
 
     def list(self, request, *args, **kwargs):
-        output = _('Welcome to my site.')
+        number = random.choice('0123456789')
+
+        output = _('Your number is {}').format(number)
+        logger.info(output)
 
         return Response({'output': output})
